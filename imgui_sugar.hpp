@@ -60,7 +60,7 @@ namespace sugar
     struct guard_void
     {
         static_assert(
-            std::is_same<EndArg, int>::value || std::is_same<EndArg, void>::value, 
+            std::is_same<EndArg, int>::value || std::is_void<EndArg>::value, 
             "Only End*/Pop* functions accepting int or void are supported"
         );
 
@@ -76,7 +76,7 @@ namespace sugar
         
         ~guard_void() noexcept 
         {
-            if constexpr (std::is_same<EndArg, void>::value) _end();
+            if constexpr (std::is_void<EndArg>::value) _end();
             else reinterpret_cast<end_int_fn_t>(_end)(1);
         }
         
@@ -143,6 +143,10 @@ namespace sugar
 #define with_TabItem(...)            _SUGAR_SCOPED_BOOL(BeginTabItem,            EndTabItem,        false, __VA_ARGS__)
 #define with_DragDropSource(...)     _SUGAR_SCOPED_BOOL(BeginDragDropSource,     EndDragDropSource, false, __VA_ARGS__)
 #define with_DragDropTarget(...)     _SUGAR_SCOPED_BOOL(BeginDragDropTarget,     EndDragDropTarget, false, __VA_ARGS__)
+#define with_TreeNode(...)           _SUGAR_SCOPED_BOOL(TreeNode,                TreePop,           false, __VA_ARGS__)
+#define with_TreeNodeV(...)          _SUGAR_SCOPED_BOOL(TreeNodeV,               TreePop,           false, __VA_ARGS__)
+#define with_TreeNodeEx(...)         _SUGAR_SCOPED_BOOL(TreeNodeEx,              TreePop,           false, __VA_ARGS__)
+#define with_TreeNodeExV(...)        _SUGAR_SCOPED_BOOL(TreeNodeExV,             TreePop,           false, __VA_ARGS__)
 
 #define with_Group                   _SUGAR_SCOPED_VOID_0(BeginGroup,   EndGroup)
 #define with_Tooltip                 _SUGAR_SCOPED_VOID_0(BeginTooltip, EndTooltip)
@@ -181,5 +185,9 @@ namespace sugar
 
 #define with_StyleColor(...) if (set_StyleColor(__VA_ARGS__))
 #define with_StyleVar(...)   if (set_StyleVar(__VA_ARGS__))
+
+// Non RAII 
+
+#define with_CollapsingHeader(...) if (ImGui::CollapsingHeader(__VA_ARGS__))
 
 // clang-format on

@@ -134,8 +134,11 @@ Sugar function                |Begin Call               |End Call |
 |with_TextureID(...) { ... }          |ImGui::PushTextureID,           |ImGui::PopTextureID |          
 |with_StyleColor(...) { ... }         |ImGui::PushStyleColor,          |ImGui::PopStyleColor |           
 |with_StyleVar(...) { ... }           |ImGui::PushStyleVar,            |ImGui::PopStyleVar |          
-
-
+|with_TreeNode(...) { ... }           |ImGui::TreeNode                 |ImGui::TreePop |
+|with_TreeNodeV(...) { ... }          |ImGui::TreeNodeV                |ImGui::TreePop |
+|with_TreeNodeEx(...) { ... }         |ImGui::TreeNodeEx               |ImGui::TreePop |
+|with_TreeNodeExV(...) { ... }        |ImGui::TreeNodeExV              |ImGui::TreePop |
+|with_CollapsingHeader(...) { ... }   |ImGui::CollapsingHeader         | |           
 
 ## Parent scoped guards 
 
@@ -143,7 +146,6 @@ Sugar function |Begin Call |End Call |
 | --- | --- | --- |
 |set_StyleColor(...) |ImGui::PushStyleColor, |ImGui::PopStyleColor |           
 |set_StyleVar(...)   |ImGui::PushStyleVar,   |ImGui::PopStyleVar |          
-
 
 ## Abstraction cost
 
