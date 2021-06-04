@@ -69,7 +69,7 @@ namespace sugar
         using end_int_fn_t = void (*)(int);
 
         guard_void(begin_fn_t begin, end_void_fn_t end, Args&&... args) noexcept 
-            : _end(reinterpret_cast<end_void_fn_t>(end)) { begin(std::forward<Args>(args)...); }
+            : _end(end) { begin(std::forward<Args>(args)...); }
         
         guard_void(begin_fn_t begin, end_int_fn_t end, Args&&... args) noexcept 
             : _end(reinterpret_cast<end_void_fn_t>(end)) { begin(std::forward<Args>(args)...); }
