@@ -65,25 +65,17 @@ namespace sugar
         );
 
         using begin_fn_t = void (*)(Args...);
-        using end_void_fn_t = void (*)();
-        using end_int_fn_t = void (*)(int);
+        using end_fn_t = void (*)();
 
-        guard_void(begin_fn_t begin, end_void_fn_t end, Args&&... args) noexcept 
+        guard_void(begin_fn_t begin, end_fn_t end, Args&&... args) noexcept 
             : _end(end) { begin(std::forward<Args>(args)...); }
         
-        guard_void(begin_fn_t begin, end_int_fn_t end, Args&&... args) noexcept 
-            : _end(reinterpret_cast<end_void_fn_t>(end)) { begin(std::forward<Args>(args)...); }
-        
-        ~guard_void() noexcept 
-        {
-            if constexpr (std::is_void<EndArg>::value) _end();
-            else reinterpret_cast<end_int_fn_t>(_end)(1);
-        }
+        ~guard_void() noexcept { _end(); }
         
         constexpr operator bool() const noexcept { return true; }
 
         private:
-            end_void_fn_t _end;
+            end_fn_t _end;
     };
 
 }
@@ -173,15 +165,20 @@ namespace sugar
 
 // Special case (overloaded functions StyleColor and StyleVar)
 
+namespace sugar {
+    inline void PopStyleColor() { ImGui::PopStyleColor(1); };
+    inline void PopStyleVar()   { ImGui::PopStyleVar(1); };
+}
+
 #define set_StyleColor(ITEM, ...)                                                                                   \
     const sugar::guard_void<int, ImGuiCol,                                                                          \
         std::conditional<std::is_integral<decltype(__VA_ARGS__)>::value, ImU32, const ImVec4&>::type>               \
-        _SUGAR_CONCAT1(_ui_scope_, __LINE__) = {&ImGui::PushStyleColor, &ImGui::PopStyleColor, ITEM, __VA_ARGS__}
+        _SUGAR_CONCAT1(_ui_scope_, __LINE__) = {&ImGui::PushStyleColor, &sugar::PopStyleColor, ITEM, __VA_ARGS__}
 
 #define set_StyleVar(ITEM, ...)                                                                                     \
     const sugar::guard_void<int, ImGuiStyleVar,                                                                     \
         std::conditional<std::is_arithmetic<decltype(__VA_ARGS__)>::value, float, const ImVec2&>::type>             \
-        _SUGAR_CONCAT1(_ui_scope_, __LINE__) = {&ImGui::PushStyleVar, &ImGui::PopStyleVar, ITEM, __VA_ARGS__}
+        _SUGAR_CONCAT1(_ui_scope_, __LINE__) = {&ImGui::PushStyleVar, &sugar::PopStyleVar, ITEM, __VA_ARGS__}
 
 #define with_StyleColor(...) if (set_StyleColor(__VA_ARGS__))
 #define with_StyleVar(...)   if (set_StyleVar(__VA_ARGS__))
