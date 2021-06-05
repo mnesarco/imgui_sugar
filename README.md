@@ -1,12 +1,12 @@
-# C++17 syntactic sugar for ImGui with RAII guards
+# C++11 syntactic sugar for ImGui with RAII guards
 
 This single header library adds a clean DSL (syntax sugar) to
-construct ImGui interfaces in c++17. It manages the stack with transparent
+construct ImGui interfaces in c++11. It manages the stack with transparent
 RAII guards.
 
 ## Requirements
 
-* c++17
+* c++11
 * [Dear ImGui](https://github.com/ocornut/imgui)
 
 ## Install

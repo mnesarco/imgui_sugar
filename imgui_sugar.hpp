@@ -32,22 +32,20 @@
 
 namespace sugar
 {
+    using end_fn_ptr = void(*)();
 
     // RAII scope guard for ImGui Begin* functions returning bool.
-    template<bool _always_call_end>
+    template<bool AlwaysCallEnd>
     struct guard_bool
     {
-        using end_fn_ptr = void(*)();
-
         guard_bool(const bool state, const end_fn_ptr end) noexcept 
             : _state(state), _end(end) {}
     
         ~guard_bool() noexcept 
         {
-            if constexpr (_always_call_end) { _end(); }
-            else { if (_state) _end(); }
+            if (AlwaysCallEnd || _state) { _end(); }
         }
-        
+
         operator bool() const noexcept { return _state; }
 
         private:
@@ -56,18 +54,12 @@ namespace sugar
     };
 
     // RAII scope guard for ImGui Begin*/Push* functions returning void
-    template<typename EndArg = void, typename ...Args>
+    template<typename ...Args>
     struct guard_void
     {
-        static_assert(
-            std::is_same<EndArg, int>::value || std::is_void<EndArg>::value, 
-            "Only End*/Pop* functions accepting int or void are supported"
-        );
-
         using begin_fn_t = void (*)(Args...);
-        using end_fn_t = void (*)();
 
-        guard_void(begin_fn_t begin, end_fn_t end, Args&&... args) noexcept 
+        guard_void(begin_fn_t begin, end_fn_ptr end, Args&&... args) noexcept 
             : _end(end) { begin(std::forward<Args>(args)...); }
         
         ~guard_void() noexcept { _end(); }
@@ -75,9 +67,8 @@ namespace sugar
         constexpr operator bool() const noexcept { return true; }
 
         private:
-            end_fn_t _end;
+            end_fn_ptr _end;
     };
-
 }
 
 // ----------------------------------------------------------------------------
@@ -171,12 +162,12 @@ namespace sugar {
 }
 
 #define set_StyleColor(ITEM, ...)                                                                                   \
-    const sugar::guard_void<int, ImGuiCol,                                                                          \
+    const sugar::guard_void<ImGuiCol,                                                                               \
         std::conditional<std::is_integral<decltype(__VA_ARGS__)>::value, ImU32, const ImVec4&>::type>               \
         _SUGAR_CONCAT1(_ui_scope_, __LINE__) = {&ImGui::PushStyleColor, &sugar::PopStyleColor, ITEM, __VA_ARGS__}
 
 #define set_StyleVar(ITEM, ...)                                                                                     \
-    const sugar::guard_void<int, ImGuiStyleVar,                                                                     \
+    const sugar::guard_void<ImGuiStyleVar,                                                                          \
         std::conditional<std::is_arithmetic<decltype(__VA_ARGS__)>::value, float, const ImVec2&>::type>             \
         _SUGAR_CONCAT1(_ui_scope_, __LINE__) = {&ImGui::PushStyleVar, &sugar::PopStyleVar, ITEM, __VA_ARGS__}
 
