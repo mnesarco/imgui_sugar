@@ -76,7 +76,7 @@ Just add `imgui_sugar.hpp` to your sources and include it when required.
 
 ## Rational
 
-* Functions named `with_*` do start its own scope and automatically call End/Pop as required. (Yes the case where End/Pop call is unconditionall is respected).
+* Macros named `with_*` do start its own scope and automatically call End/Pop as required. (Yes the case where End/Pop call is unconditionall is respected).
 
 ```cpp
 with_Window(...) { 
@@ -89,7 +89,7 @@ with_StyleColor(ImGuiCol_Text, ImVec4{ 0, 0.5f, 0, 1.0f })
 
 ```
 
-* Functions named `set_*` do not start its own scope but its state is managed by the surrounding scope.
+* Macros named `set_*` do not start its own scope but its state is managed by the surrounding scope.
 
 ```cpp
 {
@@ -149,18 +149,16 @@ Sugar function |Begin Call |End Call |
 
 ## Abstraction cost
 
-* All guards store a function pointer to the end function.
-* Some guards store a boolean var with the returned value from begin.
-* No heap allocations are done.
-
+* All guards do store a function pointer to the end callback.
+* Some guards do store a boolean member with the returned value from begin callback.
+* No heap allocations are done at all.
 
 ## Disclaimers
 
 * No guarantees.
-* This is very opinionated, if you don't like it, just do not use it.
+* This is very opinionated.
 * This uses templates and macros.
-* This is **not a proposal**, just something that you can use if you want.
-
+* This is **not a proposal**, just something that you can use if you like it.
 
 ## Contributions
 
