@@ -20,7 +20,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#include <imgui.h>
+#include <imgui/imgui.h>
 #include <type_traits>
 #include <utility>
 
@@ -53,27 +53,10 @@ namespace ImGuiSugar
             ScopeEndCallback _end;
     };
 
-    // RAII scope guard for ImGui Begin*/Push* functions returning void
-    template<typename ...Args>
-    struct VoidGuard
-    {
-        using ScopeBeginCallback = void (*)(Args...);
-
-        VoidGuard(ScopeBeginCallback begin, ScopeEndCallback end, Args&&... args) noexcept 
-            : _end(end) { begin(std::forward<Args>(args)...); }
-        
-        ~VoidGuard() noexcept { _end(); }
-        
-        constexpr operator bool() const & noexcept { return true; }
-
-        private:
-            ScopeEndCallback _end;
-    };
-
     // For special cases, transform void(*)(int) to void(*)()
     inline void PopStyleColor() { ImGui::PopStyleColor(1); };
     inline void PopStyleVar()   { ImGui::PopStyleVar(1); };
-}
+} // namespace ImGuiSugar
 
 // ----------------------------------------------------------------------------
 // [SECTION] Utility macros
@@ -98,13 +81,16 @@ namespace ImGuiSugar
     if (const ImGuiSugar::BooleanGuard<ALWAYS> _ui_scope_guard = {ImGui::BEGIN(__VA_ARGS__), &ImGui::END})
 
 #define _IMGUI_SUGAR_SCOPED_VOID_N(BEGIN, END, ...) \
-    if (const ImGuiSugar::VoidGuard _ui_scope_guard = {&ImGui::BEGIN, &ImGui::END, __VA_ARGS__})
+    ImGui::BEGIN(__VA_ARGS__); \
+    if (const ImGuiSugar::BooleanGuard<true> _ui_scope_guard = {true, &ImGui::END})
 
 #define _IMGUI_SUGAR_SCOPED_VOID_0(BEGIN, END) \
-    if (const ImGuiSugar::VoidGuard _ui_scope_guard = {&ImGui::BEGIN, &ImGui::END})
+    ImGui::BEGIN(); \
+    if (const ImGuiSugar::BooleanGuard<true> _ui_scope_guard = {true, &ImGui::END})
 
 #define _IMGUI_SUGAR_PARENT_SCOPED_VOID_N(BEGIN, END, ...) \
-    const ImGuiSugar::VoidGuard _IMGUI_SUGAR_CONCAT1(_ui_scope_, __LINE__) = {&ImGui::BEGIN, &ImGui::END, __VA_ARGS__}
+    ImGui::BEGIN(__VA_ARGS__); \
+    const ImGuiSugar::BooleanGuard<true> _IMGUI_SUGAR_CONCAT1(_ui_scope_, __LINE__) = {true, &ImGui::END}
 
 // ---------------------------------------------------------------------------
 // [SECTION] ImGui DSL
@@ -164,18 +150,25 @@ namespace ImGuiSugar
 
 // Special case (overloaded functions StyleColor and StyleVar)
 
-#define set_StyleColor(ITEM, ...)                                                                                           \
-    const ImGuiSugar::VoidGuard<ImGuiCol,                                                                                   \
-        std::conditional<std::is_integral<decltype(__VA_ARGS__)>::value, ImU32, const ImVec4&>::type>                       \
-        _IMGUI_SUGAR_CONCAT1(_ui_scope_, __LINE__) = {&ImGui::PushStyleColor, &ImGuiSugar::PopStyleColor, ITEM, __VA_ARGS__}
+#define set_StyleColor(...)                                                                                 \
+    ImGui::PushStyleColor(__VA_ARGS__);                                                                     \
+    const ImGuiSugar::BooleanGuard<true>                                                                    \
+        _IMGUI_SUGAR_CONCAT1(_ui_scope_, __LINE__) = {true, &ImGuiSugar::PopStyleColor}
 
-#define set_StyleVar(ITEM, ...)                                                                                             \
-    const ImGuiSugar::VoidGuard<ImGuiStyleVar,                                                                              \
-        std::conditional<std::is_arithmetic<decltype(__VA_ARGS__)>::value, float, const ImVec2&>::type>                     \
-        _IMGUI_SUGAR_CONCAT1(_ui_scope_, __LINE__) = {&ImGui::PushStyleVar, &ImGuiSugar::PopStyleVar, ITEM, __VA_ARGS__}
+#define set_StyleVar(ITEM, ...)                                                                             \
+    ImGui::PushStyleVar(__VA_ARGS__);                                                                       \
+    const ImGuiSugar::BooleanGuard<true>                                                                    \
+        _IMGUI_SUGAR_CONCAT1(_ui_scope_, __LINE__) = {true, &ImGuiSugar::PopStyleVar}
 
-#define with_StyleColor(...) if (set_StyleColor(__VA_ARGS__))
-#define with_StyleVar(...)   if (set_StyleVar(__VA_ARGS__))
+#define with_StyleColor(...)                                                                                \
+    ImGui::PushStyleColor(__VA_ARGS__);                                                                     \
+    if (const ImGuiSugar::BooleanGuard<true>                                                                \
+        _IMGUI_SUGAR_CONCAT1(_ui_scope_, __LINE__) = {true, &ImGuiSugar::PopStyleColor})
+
+#define with_StyleVar(...)                                                                                  \
+    ImGui::PushStyleVar(__VA_ARGS__);                                                                       \
+    if (const ImGuiSugar::BooleanGuard<true>                                                                \
+        _IMGUI_SUGAR_CONCAT1(_ui_scope_, __LINE__) = {true, &ImGuiSugar::PopStyleVar})
 
 // Non RAII 
 
