@@ -155,7 +155,7 @@ namespace ImGuiSugar
     const ImGuiSugar::BooleanGuard<true>                                                                    \
         _IMGUI_SUGAR_CONCAT1(_ui_scope_, __LINE__) = {true, &ImGuiSugar::PopStyleColor}
 
-#define set_StyleVar(ITEM, ...)                                                                             \
+#define set_StyleVar(...)                                                                                   \
     ImGui::PushStyleVar(__VA_ARGS__);                                                                       \
     const ImGuiSugar::BooleanGuard<true>                                                                    \
         _IMGUI_SUGAR_CONCAT1(_ui_scope_, __LINE__) = {true, &ImGuiSugar::PopStyleVar}
