@@ -62,6 +62,9 @@ namespace ImGuiSugar
 // [SECTION] Utility macros
 // ----------------------------------------------------------------------------
 
+// Portable Expression Statement, calls void function and returns true
+#define _IMGUI_SUGAR_ES(FN, ...) ([&]() -> bool { FN(__VA_ARGS__); return true; }())
+
 // Concatenating symbols with __LINE__ requires two levels of indirection
 #define _IMGUI_SUGAR_CONCAT0(A, B) A ## B
 #define _IMGUI_SUGAR_CONCAT1(A, B) _IMGUI_SUGAR_CONCAT0(A, B)
@@ -81,16 +84,13 @@ namespace ImGuiSugar
     if (const ImGuiSugar::BooleanGuard<ALWAYS> _ui_scope_guard = {ImGui::BEGIN(__VA_ARGS__), &ImGui::END})
 
 #define _IMGUI_SUGAR_SCOPED_VOID_N(BEGIN, END, ...) \
-    ImGui::BEGIN(__VA_ARGS__); \
-    if (const ImGuiSugar::BooleanGuard<true> _ui_scope_guard = {true, &ImGui::END})
+    if (const ImGuiSugar::BooleanGuard<true> _ui_scope_guard = {_IMGUI_SUGAR_ES(ImGui::BEGIN, __VA_ARGS__), &ImGui::END})
 
 #define _IMGUI_SUGAR_SCOPED_VOID_0(BEGIN, END) \
-    ImGui::BEGIN(); \
-    if (const ImGuiSugar::BooleanGuard<true> _ui_scope_guard = {true, &ImGui::END})
+    if (const ImGuiSugar::BooleanGuard<true> _ui_scope_guard = {_IMGUI_SUGAR_ES(ImGui::BEGIN), &ImGui::END})
 
 #define _IMGUI_SUGAR_PARENT_SCOPED_VOID_N(BEGIN, END, ...) \
-    ImGui::BEGIN(__VA_ARGS__); \
-    const ImGuiSugar::BooleanGuard<true> _IMGUI_SUGAR_CONCAT1(_ui_scope_, __LINE__) = {true, &ImGui::END}
+    const ImGuiSugar::BooleanGuard<true> _IMGUI_SUGAR_CONCAT1(_ui_scope_, __LINE__) = {_IMGUI_SUGAR_ES(ImGui::BEGIN, __VA_ARGS__), &ImGui::END}
 
 // ---------------------------------------------------------------------------
 // [SECTION] ImGui DSL
@@ -151,24 +151,24 @@ namespace ImGuiSugar
 // Special case (overloaded functions StyleColor and StyleVar)
 
 #define set_StyleColor(...)                                                                                 \
-    ImGui::PushStyleColor(__VA_ARGS__);                                                                     \
     const ImGuiSugar::BooleanGuard<true>                                                                    \
-        _IMGUI_SUGAR_CONCAT1(_ui_scope_, __LINE__) = {true, &ImGuiSugar::PopStyleColor}
+        _IMGUI_SUGAR_CONCAT1(_ui_scope_, __LINE__) =                                                        \
+        {_IMGUI_SUGAR_ES(ImGui::PushStyleColor, __VA_ARGS__), &ImGuiSugar::PopStyleColor}
 
 #define set_StyleVar(...)                                                                                   \
-    ImGui::PushStyleVar(__VA_ARGS__);                                                                       \
     const ImGuiSugar::BooleanGuard<true>                                                                    \
-        _IMGUI_SUGAR_CONCAT1(_ui_scope_, __LINE__) = {true, &ImGuiSugar::PopStyleVar}
+        _IMGUI_SUGAR_CONCAT1(_ui_scope_, __LINE__) =                                                        \
+        {_IMGUI_SUGAR_ES(ImGui::PushStyleVar, __VA_ARGS__), &ImGuiSugar::PopStyleVar}
 
 #define with_StyleColor(...)                                                                                \
-    ImGui::PushStyleColor(__VA_ARGS__);                                                                     \
     if (const ImGuiSugar::BooleanGuard<true>                                                                \
-        _IMGUI_SUGAR_CONCAT1(_ui_scope_, __LINE__) = {true, &ImGuiSugar::PopStyleColor})
+        _IMGUI_SUGAR_CONCAT1(_ui_scope_, __LINE__) =                                                        \
+        {_IMGUI_SUGAR_ES(ImGui::PushStyleColor, __VA_ARGS__), &ImGuiSugar::PopStyleColor})
 
 #define with_StyleVar(...)                                                                                  \
-    ImGui::PushStyleVar(__VA_ARGS__);                                                                       \
     if (const ImGuiSugar::BooleanGuard<true>                                                                \
-        _IMGUI_SUGAR_CONCAT1(_ui_scope_, __LINE__) = {true, &ImGuiSugar::PopStyleVar})
+        _IMGUI_SUGAR_CONCAT1(_ui_scope_, __LINE__) =                                                        \
+        {_IMGUI_SUGAR_ES(ImGui::PushStyleVar, __VA_ARGS__), &ImGuiSugar::PopStyleVar})
 
 // Non RAII 
 
