@@ -16,7 +16,7 @@ Just add `imgui_sugar.hpp` to your sources and include it when required.
 ## Example usage
 
 ```cpp
-#include <imgui.h>
+#include <imgui/imgui.h>
 #include <imgui_sugar.hpp>
 
 // ...
@@ -149,8 +149,7 @@ Sugar function |Begin Call |End Call |
 
 ## Abstraction cost
 
-* All guards do store a function pointer to the end callback.
-* Some guards do store a boolean member with the returned value from begin callback.
+* All guards do store a function pointer to the end callback and a boolean member with the returned value from begin callback.
 * No heap allocations are done at all.
 
 ## Disclaimers
