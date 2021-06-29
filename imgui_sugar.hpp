@@ -21,8 +21,6 @@
 // SOFTWARE.
 
 #include <imgui/imgui.h>
-#include <type_traits>
-#include <utility>
 
 // clang-format off
 
