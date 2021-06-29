@@ -47,8 +47,8 @@ namespace ImGuiSugar
         operator bool() const & noexcept { return _state; }
 
         private:
-            bool _state;
-            ScopeEndCallback _end;
+            const bool _state;
+            const ScopeEndCallback _end;
     };
 
     // For special cases, transform void(*)(int) to void(*)()
