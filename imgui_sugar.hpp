@@ -62,6 +62,7 @@ namespace ImGuiSugar
 
 // Portable Expression Statement, calls void function and returns true
 #define _IMGUI_SUGAR_ES(FN, ...) ([&]() -> bool { FN(__VA_ARGS__); return true; }())
+#define _IMGUI_SUGAR_ES_0(FN) ([&]() -> bool { FN(); return true; }())
 
 // Concatenating symbols with __LINE__ requires two levels of indirection
 #define _IMGUI_SUGAR_CONCAT0(A, B) A ## B
@@ -85,7 +86,7 @@ namespace ImGuiSugar
     if (const ImGuiSugar::BooleanGuard<true> _ui_scope_guard = {_IMGUI_SUGAR_ES(ImGui::BEGIN, __VA_ARGS__), &ImGui::END})
 
 #define _IMGUI_SUGAR_SCOPED_VOID_0(BEGIN, END) \
-    if (const ImGuiSugar::BooleanGuard<true> _ui_scope_guard = {_IMGUI_SUGAR_ES(ImGui::BEGIN), &ImGui::END})
+    if (const ImGuiSugar::BooleanGuard<true> _ui_scope_guard = {_IMGUI_SUGAR_ES_0(ImGui::BEGIN), &ImGui::END})
 
 #define _IMGUI_SUGAR_PARENT_SCOPED_VOID_N(BEGIN, END, ...) \
     const ImGuiSugar::BooleanGuard<true> _IMGUI_SUGAR_CONCAT1(_ui_scope_, __LINE__) = {_IMGUI_SUGAR_ES(ImGui::BEGIN, __VA_ARGS__), &ImGui::END}
