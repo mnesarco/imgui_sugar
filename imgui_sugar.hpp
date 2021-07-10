@@ -82,6 +82,9 @@ namespace ImGuiSugar
 #define _IMGUI_SUGAR_SCOPED_BOOL(BEGIN, END, ALWAYS, ...) \
     if (const ImGuiSugar::BooleanGuard<ALWAYS> _ui_scope_guard = {ImGui::BEGIN(__VA_ARGS__), &ImGui::END})
 
+#define _IMGUI_SUGAR_SCOPED_BOOL_0(BEGIN, END, ALWAYS) \
+    if (const ImGuiSugar::BooleanGuard<ALWAYS> _ui_scope_guard = {ImGui::BEGIN(), &ImGui::END})
+
 #define _IMGUI_SUGAR_SCOPED_VOID_N(BEGIN, END, ...) \
     if (const ImGuiSugar::BooleanGuard<true> _ui_scope_guard = {_IMGUI_SUGAR_ES(ImGui::BEGIN, __VA_ARGS__), &ImGui::END})
 
@@ -102,8 +105,6 @@ namespace ImGuiSugar
 #define with_ChildFrame(...)         _IMGUI_SUGAR_SCOPED_BOOL(BeginChildFrame,         EndChildFrame,     true,  __VA_ARGS__)
 #define with_Combo(...)              _IMGUI_SUGAR_SCOPED_BOOL(BeginCombo,              EndCombo,          false, __VA_ARGS__)
 #define with_ListBox(...)            _IMGUI_SUGAR_SCOPED_BOOL(BeginListBox,            EndListBox,        false, __VA_ARGS__)
-#define with_MenuBarArgs(...)        _IMGUI_SUGAR_SCOPED_BOOL(BeginMenuBar,            EndMenuBar,        false, __VA_ARGS__)
-#define with_MainMenuBarArgs(...)    _IMGUI_SUGAR_SCOPED_BOOL(BeginMainMenuBar,        EndMainMenuBar,    false, __VA_ARGS__)
 #define with_Menu(...)               _IMGUI_SUGAR_SCOPED_BOOL(BeginMenu,               EndMenu,           false, __VA_ARGS__)
 #define with_Popup(...)              _IMGUI_SUGAR_SCOPED_BOOL(BeginPopup,              EndPopup,          false, __VA_ARGS__)
 #define with_PopupModal(...)         _IMGUI_SUGAR_SCOPED_BOOL(BeginPopupModal,         EndPopup,          false, __VA_ARGS__)
@@ -114,15 +115,14 @@ namespace ImGuiSugar
 #define with_TabBar(...)             _IMGUI_SUGAR_SCOPED_BOOL(BeginTabBar,             EndTabBar,         false, __VA_ARGS__)
 #define with_TabItem(...)            _IMGUI_SUGAR_SCOPED_BOOL(BeginTabItem,            EndTabItem,        false, __VA_ARGS__)
 #define with_DragDropSource(...)     _IMGUI_SUGAR_SCOPED_BOOL(BeginDragDropSource,     EndDragDropSource, false, __VA_ARGS__)
-#define with_DragDropTargetArgs(...) _IMGUI_SUGAR_SCOPED_BOOL(BeginDragDropTarget,     EndDragDropTarget, false, __VA_ARGS__)
 #define with_TreeNode(...)           _IMGUI_SUGAR_SCOPED_BOOL(TreeNode,                TreePop,           false, __VA_ARGS__)
 #define with_TreeNodeV(...)          _IMGUI_SUGAR_SCOPED_BOOL(TreeNodeV,               TreePop,           false, __VA_ARGS__)
 #define with_TreeNodeEx(...)         _IMGUI_SUGAR_SCOPED_BOOL(TreeNodeEx,              TreePop,           false, __VA_ARGS__)
 #define with_TreeNodeExV(...)        _IMGUI_SUGAR_SCOPED_BOOL(TreeNodeExV,             TreePop,           false, __VA_ARGS__)
 
-#define with_DragDropTarget          with_DragDropTargetArgs()
-#define with_MainMenuBar             with_MainMenuBarArgs()
-#define with_MenuBar                 with_MenuBarArgs()
+#define with_DragDropTarget          _IMGUI_SUGAR_SCOPED_BOOL_0(BeginDragDropTarget,   EndDragDropTarget, false)
+#define with_MainMenuBar             _IMGUI_SUGAR_SCOPED_BOOL_0(BeginMainMenuBar,      EndMainMenuBar,    false)
+#define with_MenuBar                 _IMGUI_SUGAR_SCOPED_BOOL_0(BeginMenuBar,          EndMenuBar,        false)
 
 #define with_Group                   _IMGUI_SUGAR_SCOPED_VOID_0(BeginGroup,   EndGroup)
 #define with_Tooltip                 _IMGUI_SUGAR_SCOPED_VOID_0(BeginTooltip, EndTooltip)
@@ -172,5 +172,6 @@ namespace ImGuiSugar
 // Non RAII 
 
 #define with_CollapsingHeader(...) if (ImGui::CollapsingHeader(__VA_ARGS__))
+#define with_MenuItem(...) if (ImGui::MenuItem(__VA_ARGS__))
 
 // clang-format on
