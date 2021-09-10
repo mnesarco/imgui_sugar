@@ -75,24 +75,24 @@ namespace ImGuiSugar
 // +----------------------+-------------------+-----------------+---------------------+
 // | BEGIN                | END               | ALWAYS          | __VA_ARGS__         |
 // +----------------------+-------------------+-----------------+---------------------+
-// | ImGui::Begin*/Push*  | ImGui::End*/Pop*  | Is call to END  | ImGui::Begin*/Push* |
+// | Begin*/Push*         | End*/Pop*         | Is call to END  | Begin*/Push*        |
 // | function name        | function name     | unconditional?  | function arguments  |
 // +----------------------+-------------------+-----------------+---------------------+
 
 #define IMGUI_SUGAR_SCOPED_BOOL(BEGIN, END, ALWAYS, ...) \
-    if (const ImGuiSugar::BooleanGuard<ALWAYS> _ui_scope_guard = {ImGui::BEGIN(__VA_ARGS__), &ImGui::END})
+    if (const ImGuiSugar::BooleanGuard<ALWAYS> _ui_scope_guard = {BEGIN(__VA_ARGS__), &END})
 
 #define IMGUI_SUGAR_SCOPED_BOOL_0(BEGIN, END, ALWAYS) \
-    if (const ImGuiSugar::BooleanGuard<ALWAYS> _ui_scope_guard = {ImGui::BEGIN(), &ImGui::END})
+    if (const ImGuiSugar::BooleanGuard<ALWAYS> _ui_scope_guard = {BEGIN(), &END})
 
 #define IMGUI_SUGAR_SCOPED_VOID_N(BEGIN, END, ...) \
-    if (const ImGuiSugar::BooleanGuard<true> _ui_scope_guard = {IMGUI_SUGAR_ES(ImGui::BEGIN, __VA_ARGS__), &ImGui::END})
+    if (const ImGuiSugar::BooleanGuard<true> _ui_scope_guard = {IMGUI_SUGAR_ES(BEGIN, __VA_ARGS__), &END})
 
 #define IMGUI_SUGAR_SCOPED_VOID_0(BEGIN, END) \
-    if (const ImGuiSugar::BooleanGuard<true> _ui_scope_guard = {IMGUI_SUGAR_ES_0(ImGui::BEGIN), &ImGui::END})
+    if (const ImGuiSugar::BooleanGuard<true> _ui_scope_guard = {IMGUI_SUGAR_ES_0(BEGIN), &END})
 
 #define IMGUI_SUGAR_PARENT_SCOPED_VOID_N(BEGIN, END, ...) \
-    const ImGuiSugar::BooleanGuard<true> IMGUI_SUGAR_CONCAT1(_ui_scope_, __LINE__) = {IMGUI_SUGAR_ES(ImGui::BEGIN, __VA_ARGS__), &ImGui::END}
+    const ImGuiSugar::BooleanGuard<true> IMGUI_SUGAR_CONCAT1(_ui_scope_, __LINE__) = {IMGUI_SUGAR_ES(BEGIN, __VA_ARGS__), &END}
 
 // ---------------------------------------------------------------------------
 // [SECTION] ImGui DSL
@@ -100,74 +100,60 @@ namespace ImGuiSugar
 
 // Self scoped blocks
 
-#define with_Window(...)             IMGUI_SUGAR_SCOPED_BOOL(Begin,                   End,               true,  __VA_ARGS__)
-#define with_Child(...)              IMGUI_SUGAR_SCOPED_BOOL(BeginChild,              EndChild,          true,  __VA_ARGS__)
-#define with_ChildFrame(...)         IMGUI_SUGAR_SCOPED_BOOL(BeginChildFrame,         EndChildFrame,     true,  __VA_ARGS__)
-#define with_Combo(...)              IMGUI_SUGAR_SCOPED_BOOL(BeginCombo,              EndCombo,          false, __VA_ARGS__)
-#define with_ListBox(...)            IMGUI_SUGAR_SCOPED_BOOL(BeginListBox,            EndListBox,        false, __VA_ARGS__)
-#define with_Menu(...)               IMGUI_SUGAR_SCOPED_BOOL(BeginMenu,               EndMenu,           false, __VA_ARGS__)
-#define with_Popup(...)              IMGUI_SUGAR_SCOPED_BOOL(BeginPopup,              EndPopup,          false, __VA_ARGS__)
-#define with_PopupModal(...)         IMGUI_SUGAR_SCOPED_BOOL(BeginPopupModal,         EndPopup,          false, __VA_ARGS__)
-#define with_PopupContextItem(...)   IMGUI_SUGAR_SCOPED_BOOL(BeginPopupContextItem,   EndPopup,          false, __VA_ARGS__)
-#define with_PopupContextWindow(...) IMGUI_SUGAR_SCOPED_BOOL(BeginPopupContextWindow, EndPopup,          false, __VA_ARGS__)
-#define with_PopupContextVoid(...)   IMGUI_SUGAR_SCOPED_BOOL(BeginPopupContextVoid,   EndPopup,          false, __VA_ARGS__)
-#define with_Table(...)              IMGUI_SUGAR_SCOPED_BOOL(BeginTable,              EndTable,          false, __VA_ARGS__)
-#define with_TabBar(...)             IMGUI_SUGAR_SCOPED_BOOL(BeginTabBar,             EndTabBar,         false, __VA_ARGS__)
-#define with_TabItem(...)            IMGUI_SUGAR_SCOPED_BOOL(BeginTabItem,            EndTabItem,        false, __VA_ARGS__)
-#define with_DragDropSource(...)     IMGUI_SUGAR_SCOPED_BOOL(BeginDragDropSource,     EndDragDropSource, false, __VA_ARGS__)
-#define with_TreeNode(...)           IMGUI_SUGAR_SCOPED_BOOL(TreeNode,                TreePop,           false, __VA_ARGS__)
-#define with_TreeNodeV(...)          IMGUI_SUGAR_SCOPED_BOOL(TreeNodeV,               TreePop,           false, __VA_ARGS__)
-#define with_TreeNodeEx(...)         IMGUI_SUGAR_SCOPED_BOOL(TreeNodeEx,              TreePop,           false, __VA_ARGS__)
-#define with_TreeNodeExV(...)        IMGUI_SUGAR_SCOPED_BOOL(TreeNodeExV,             TreePop,           false, __VA_ARGS__)
+#define with_Window(...)             IMGUI_SUGAR_SCOPED_BOOL(ImGui::Begin,                   ImGui::End,               true,  __VA_ARGS__)
+#define with_Child(...)              IMGUI_SUGAR_SCOPED_BOOL(ImGui::BeginChild,              ImGui::EndChild,          true,  __VA_ARGS__)
+#define with_ChildFrame(...)         IMGUI_SUGAR_SCOPED_BOOL(ImGui::BeginChildFrame,         ImGui::EndChildFrame,     true,  __VA_ARGS__)
+#define with_Combo(...)              IMGUI_SUGAR_SCOPED_BOOL(ImGui::BeginCombo,              ImGui::EndCombo,          false, __VA_ARGS__)
+#define with_ListBox(...)            IMGUI_SUGAR_SCOPED_BOOL(ImGui::BeginListBox,            ImGui::EndListBox,        false, __VA_ARGS__)
+#define with_Menu(...)               IMGUI_SUGAR_SCOPED_BOOL(ImGui::BeginMenu,               ImGui::EndMenu,           false, __VA_ARGS__)
+#define with_Popup(...)              IMGUI_SUGAR_SCOPED_BOOL(ImGui::BeginPopup,              ImGui::EndPopup,          false, __VA_ARGS__)
+#define with_PopupModal(...)         IMGUI_SUGAR_SCOPED_BOOL(ImGui::BeginPopupModal,         ImGui::EndPopup,          false, __VA_ARGS__)
+#define with_PopupContextItem(...)   IMGUI_SUGAR_SCOPED_BOOL(ImGui::BeginPopupContextItem,   ImGui::EndPopup,          false, __VA_ARGS__)
+#define with_PopupContextWindow(...) IMGUI_SUGAR_SCOPED_BOOL(ImGui::BeginPopupContextWindow, ImGui::EndPopup,          false, __VA_ARGS__)
+#define with_PopupContextVoid(...)   IMGUI_SUGAR_SCOPED_BOOL(ImGui::BeginPopupContextVoid,   ImGui::EndPopup,          false, __VA_ARGS__)
+#define with_Table(...)              IMGUI_SUGAR_SCOPED_BOOL(ImGui::BeginTable,              ImGui::EndTable,          false, __VA_ARGS__)
+#define with_TabBar(...)             IMGUI_SUGAR_SCOPED_BOOL(ImGui::BeginTabBar,             ImGui::EndTabBar,         false, __VA_ARGS__)
+#define with_TabItem(...)            IMGUI_SUGAR_SCOPED_BOOL(ImGui::BeginTabItem,            ImGui::EndTabItem,        false, __VA_ARGS__)
+#define with_DragDropSource(...)     IMGUI_SUGAR_SCOPED_BOOL(ImGui::BeginDragDropSource,     ImGui::EndDragDropSource, false, __VA_ARGS__)
+#define with_TreeNode(...)           IMGUI_SUGAR_SCOPED_BOOL(ImGui::TreeNode,                ImGui::TreePop,           false, __VA_ARGS__)
+#define with_TreeNodeV(...)          IMGUI_SUGAR_SCOPED_BOOL(ImGui::TreeNodeV,               ImGui::TreePop,           false, __VA_ARGS__)
+#define with_TreeNodeEx(...)         IMGUI_SUGAR_SCOPED_BOOL(ImGui::TreeNodeEx,              ImGui::TreePop,           false, __VA_ARGS__)
+#define with_TreeNodeExV(...)        IMGUI_SUGAR_SCOPED_BOOL(ImGui::TreeNodeExV,             ImGui::TreePop,           false, __VA_ARGS__)
 
-#define with_DragDropTarget          IMGUI_SUGAR_SCOPED_BOOL_0(BeginDragDropTarget,   EndDragDropTarget, false)
-#define with_MainMenuBar             IMGUI_SUGAR_SCOPED_BOOL_0(BeginMainMenuBar,      EndMainMenuBar,    false)
-#define with_MenuBar                 IMGUI_SUGAR_SCOPED_BOOL_0(BeginMenuBar,          EndMenuBar,        false)
+#define with_DragDropTarget          IMGUI_SUGAR_SCOPED_BOOL_0(ImGui::BeginDragDropTarget,   ImGui::EndDragDropTarget, false)
+#define with_MainMenuBar             IMGUI_SUGAR_SCOPED_BOOL_0(ImGui::BeginMainMenuBar,      ImGui::EndMainMenuBar,    false)
+#define with_MenuBar                 IMGUI_SUGAR_SCOPED_BOOL_0(ImGui::BeginMenuBar,          ImGui::EndMenuBar,        false)
 
-#define with_Group                   IMGUI_SUGAR_SCOPED_VOID_0(BeginGroup,   EndGroup)
-#define with_Tooltip                 IMGUI_SUGAR_SCOPED_VOID_0(BeginTooltip, EndTooltip)
+#define with_Group                   IMGUI_SUGAR_SCOPED_VOID_0(ImGui::BeginGroup,            ImGui::EndGroup)
+#define with_Tooltip                 IMGUI_SUGAR_SCOPED_VOID_0(ImGui::BeginTooltip,          ImGui::EndTooltip)
 
-#define with_Font(...)               IMGUI_SUGAR_SCOPED_VOID_N(PushFont,               PopFont,               __VA_ARGS__)
-#define with_AllowKeyboardFocus(...) IMGUI_SUGAR_SCOPED_VOID_N(PushAllowKeyboardFocus, PopAllowKeyboardFocus, __VA_ARGS__)
-#define with_ButtonRepeat(...)       IMGUI_SUGAR_SCOPED_VOID_N(PushButtonRepeat,       PopButtonRepeat,       __VA_ARGS__)
-#define with_ItemWidth(...)          IMGUI_SUGAR_SCOPED_VOID_N(PushItemWidth,          PopItemWidth,          __VA_ARGS__)
-#define with_TextWrapPos(...)        IMGUI_SUGAR_SCOPED_VOID_N(PushTextWrapPos,        PopTextWrapPos,        __VA_ARGS__)
-#define with_ID(...)                 IMGUI_SUGAR_SCOPED_VOID_N(PushID,                 PopID,                 __VA_ARGS__)
-#define with_ClipRect(...)           IMGUI_SUGAR_SCOPED_VOID_N(PushClipRect,           PopClipRect,           __VA_ARGS__)
-#define with_TextureID(...)          IMGUI_SUGAR_SCOPED_VOID_N(PushTextureID,          PopTextureID,          __VA_ARGS__)
+#define with_Font(...)               IMGUI_SUGAR_SCOPED_VOID_N(ImGui::PushFont,               ImGui::PopFont,               __VA_ARGS__)
+#define with_AllowKeyboardFocus(...) IMGUI_SUGAR_SCOPED_VOID_N(ImGui::PushAllowKeyboardFocus, ImGui::PopAllowKeyboardFocus, __VA_ARGS__)
+#define with_ButtonRepeat(...)       IMGUI_SUGAR_SCOPED_VOID_N(ImGui::PushButtonRepeat,       ImGui::PopButtonRepeat,       __VA_ARGS__)
+#define with_ItemWidth(...)          IMGUI_SUGAR_SCOPED_VOID_N(ImGui::PushItemWidth,          ImGui::PopItemWidth,          __VA_ARGS__)
+#define with_TextWrapPos(...)        IMGUI_SUGAR_SCOPED_VOID_N(ImGui::PushTextWrapPos,        ImGui::PopTextWrapPos,        __VA_ARGS__)
+#define with_ID(...)                 IMGUI_SUGAR_SCOPED_VOID_N(ImGui::PushID,                 ImGui::PopID,                 __VA_ARGS__)
+#define with_ClipRect(...)           IMGUI_SUGAR_SCOPED_VOID_N(ImGui::PushClipRect,           ImGui::PopClipRect,           __VA_ARGS__)
+#define with_TextureID(...)          IMGUI_SUGAR_SCOPED_VOID_N(ImGui::PushTextureID,          ImGui::PopTextureID,          __VA_ARGS__)
 
 // Non self scoped guards (managed by parent scope)
 
-#define set_Font(...)                IMGUI_SUGAR_PARENT_SCOPED_VOID_N(PushFont,               PopFont,               __VA_ARGS__)
-#define set_AllowKeyboardFocus(...)  IMGUI_SUGAR_PARENT_SCOPED_VOID_N(PushAllowKeyboardFocus, PopAllowKeyboardFocus, __VA_ARGS__)
-#define set_ButtonRepeat(...)        IMGUI_SUGAR_PARENT_SCOPED_VOID_N(PushButtonRepeat,       PopButtonRepeat,       __VA_ARGS__)
-#define set_ItemWidth(...)           IMGUI_SUGAR_PARENT_SCOPED_VOID_N(PushItemWidth,          PopItemWidth,          __VA_ARGS__)
-#define set_TextWrapPos(...)         IMGUI_SUGAR_PARENT_SCOPED_VOID_N(PushTextWrapPos,        PopTextWrapPos,        __VA_ARGS__)
-#define set_ID(...)                  IMGUI_SUGAR_PARENT_SCOPED_VOID_N(PushID,                 PopID,                 __VA_ARGS__)
-#define set_ClipRect(...)            IMGUI_SUGAR_PARENT_SCOPED_VOID_N(PushClipRect,           PopClipRect,           __VA_ARGS__)
-#define set_TextureID(...)           IMGUI_SUGAR_PARENT_SCOPED_VOID_N(PushTextureID,          PopTextureID,          __VA_ARGS__)
+#define set_Font(...)                IMGUI_SUGAR_PARENT_SCOPED_VOID_N(ImGui::PushFont,               ImGui::PopFont,               __VA_ARGS__)
+#define set_AllowKeyboardFocus(...)  IMGUI_SUGAR_PARENT_SCOPED_VOID_N(ImGui::PushAllowKeyboardFocus, ImGui::PopAllowKeyboardFocus, __VA_ARGS__)
+#define set_ButtonRepeat(...)        IMGUI_SUGAR_PARENT_SCOPED_VOID_N(ImGui::PushButtonRepeat,       ImGui::PopButtonRepeat,       __VA_ARGS__)
+#define set_ItemWidth(...)           IMGUI_SUGAR_PARENT_SCOPED_VOID_N(ImGui::PushItemWidth,          ImGui::PopItemWidth,          __VA_ARGS__)
+#define set_TextWrapPos(...)         IMGUI_SUGAR_PARENT_SCOPED_VOID_N(ImGui::PushTextWrapPos,        ImGui::PopTextWrapPos,        __VA_ARGS__)
+#define set_ID(...)                  IMGUI_SUGAR_PARENT_SCOPED_VOID_N(ImGui::PushID,                 ImGui::PopID,                 __VA_ARGS__)
+#define set_ClipRect(...)            IMGUI_SUGAR_PARENT_SCOPED_VOID_N(ImGui::PushClipRect,           ImGui::PopClipRect,           __VA_ARGS__)
+#define set_TextureID(...)           IMGUI_SUGAR_PARENT_SCOPED_VOID_N(ImGui::PushTextureID,          ImGui::PopTextureID,          __VA_ARGS__)
 
 // Special case (overloaded functions StyleColor and StyleVar)
 
-#define set_StyleColor(...)                                                                                 \
-    const ImGuiSugar::BooleanGuard<true>                                                                    \
-        IMGUI_SUGAR_CONCAT1(_ui_scope_, __LINE__) =                                                        \
-        {IMGUI_SUGAR_ES(ImGui::PushStyleColor, __VA_ARGS__), &ImGuiSugar::PopStyleColor}
+#define set_StyleColor(...)          IMGUI_SUGAR_PARENT_SCOPED_VOID_N(ImGui::PushStyleColor,  ImGuiSugar::PopStyleColor,           __VA_ARGS__)
+#define set_StyleVar(...)            IMGUI_SUGAR_PARENT_SCOPED_VOID_N(ImGui::PushStyleVar,    ImGuiSugar::PopStyleVar,             __VA_ARGS__)
 
-#define set_StyleVar(...)                                                                                   \
-    const ImGuiSugar::BooleanGuard<true>                                                                    \
-        IMGUI_SUGAR_CONCAT1(_ui_scope_, __LINE__) =                                                        \
-        {IMGUI_SUGAR_ES(ImGui::PushStyleVar, __VA_ARGS__), &ImGuiSugar::PopStyleVar}
-
-#define with_StyleColor(...)                                                                                \
-    if (const ImGuiSugar::BooleanGuard<true>                                                                \
-        IMGUI_SUGAR_CONCAT1(_ui_scope_, __LINE__) =                                                        \
-        {IMGUI_SUGAR_ES(ImGui::PushStyleColor, __VA_ARGS__), &ImGuiSugar::PopStyleColor})
-
-#define with_StyleVar(...)                                                                                  \
-    if (const ImGuiSugar::BooleanGuard<true>                                                                \
-        IMGUI_SUGAR_CONCAT1(_ui_scope_, __LINE__) =                                                        \
-        {IMGUI_SUGAR_ES(ImGui::PushStyleVar, __VA_ARGS__), &ImGuiSugar::PopStyleVar})
+#define with_StyleColor(...)         IMGUI_SUGAR_SCOPED_VOID_N(ImGui::PushStyleColor,         ImGuiSugar::PopStyleColor,           __VA_ARGS__)
+#define with_StyleVar(...)           IMGUI_SUGAR_SCOPED_VOID_N(ImGui::PushStyleVar,           ImGuiSugar::PopStyleVar,             __VA_ARGS__)
 
 // Non RAII 
 
