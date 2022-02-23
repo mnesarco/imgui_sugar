@@ -25,7 +25,7 @@
 // clang-format off
 
 // ----------------------------------------------------------------------------
-// [SECTION] RAII guard implemetations
+// [SECTION] RAII guard implementations
 // ----------------------------------------------------------------------------
 
 namespace ImGuiSugar
@@ -38,13 +38,18 @@ namespace ImGuiSugar
     {
         BooleanGuard(const bool state, const ScopeEndCallback end) noexcept
             : m_state(state), m_end(end) {}
-    
+
+        BooleanGuard(const BooleanGuard<AlwaysCallEnd>&) = delete;
+        BooleanGuard(BooleanGuard<AlwaysCallEnd>&&) = delete;
+        BooleanGuard<AlwaysCallEnd>& operator=(const BooleanGuard<AlwaysCallEnd>&) = delete; // NOLINT
+        BooleanGuard<AlwaysCallEnd>& operator=(BooleanGuard<AlwaysCallEnd>&&) = delete; // NOLINT
+
         ~BooleanGuard() noexcept 
         {
             if (AlwaysCallEnd || m_state) { m_end(); }
         }
 
-        operator bool() const & noexcept { return m_state; }
+        operator bool() const & noexcept { return m_state; } // (Implicit) NOLINT
 
         private:
             const bool m_state;
@@ -54,6 +59,18 @@ namespace ImGuiSugar
     // For special cases, transform void(*)(int) to void(*)()
     inline void PopStyleColor() { ImGui::PopStyleColor(1); };
     inline void PopStyleVar()   { ImGui::PopStyleVar(1); };
+
+    // Tooltip auto triggered on hover
+    inline auto BeginTooltip() -> bool
+    {
+        if (ImGui::IsItemHovered())
+        {
+            ImGui::BeginTooltip();
+            return true;
+        }
+        return false;
+    }
+
 } // namespace ImGuiSugar
 
 // ----------------------------------------------------------------------------
@@ -120,6 +137,7 @@ namespace ImGuiSugar
 #define with_TreeNodeEx(...)         IMGUI_SUGAR_SCOPED_BOOL(ImGui::TreeNodeEx,              ImGui::TreePop,           false, __VA_ARGS__)
 #define with_TreeNodeExV(...)        IMGUI_SUGAR_SCOPED_BOOL(ImGui::TreeNodeExV,             ImGui::TreePop,           false, __VA_ARGS__)
 
+#define with_TooltipOnHover          IMGUI_SUGAR_SCOPED_BOOL_0(ImGuiSugar::BeginTooltip,     ImGui::EndTooltip,        false)
 #define with_DragDropTarget          IMGUI_SUGAR_SCOPED_BOOL_0(ImGui::BeginDragDropTarget,   ImGui::EndDragDropTarget, false)
 #define with_MainMenuBar             IMGUI_SUGAR_SCOPED_BOOL_0(ImGui::BeginMainMenuBar,      ImGui::EndMainMenuBar,    false)
 #define with_MenuBar                 IMGUI_SUGAR_SCOPED_BOOL_0(ImGui::BeginMenuBar,          ImGui::EndMenuBar,        false)
