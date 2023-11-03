@@ -119,7 +119,7 @@ namespace ImGuiSugar
     if (const ImGuiSugar::BooleanGuard<true> IMGUI_SUGAR_UNIQUE_NAME(_ui_scope_guard) = {IMGUI_SUGAR_ES_0(BEGIN), &END})
 
 #define IMGUI_SUGAR_PARENT_SCOPED_VOID_N(BEGIN, END, ...) \
-    const ImGuiSugar::BooleanGuard<true> IMGUI_SUGAR_CONCAT1(_ui_scope_, __LINE__) = {IMGUI_SUGAR_ES(BEGIN, __VA_ARGS__), &END}
+    const ImGuiSugar::BooleanGuard<true> IMGUI_SUGAR_UNIQUE_NAME(_ui_scope_) = {IMGUI_SUGAR_ES(BEGIN, __VA_ARGS__), &END}
 
 // ---------------------------------------------------------------------------
 // [SECTION] ImGui DSL
