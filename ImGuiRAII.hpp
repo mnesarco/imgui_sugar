@@ -20,7 +20,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#include <imgui/imgui.h>
+#include <imgui.h>
+#include <functional>
 
 // clang-format off
 
@@ -36,6 +37,11 @@ namespace ImGuiSugar
     template<bool AlwaysCallEnd>
     struct BooleanGuard
     {
+    private:
+        const bool m_state;
+        const ScopeEndCallback m_end;
+
+    public:
         BooleanGuard(const bool state, const ScopeEndCallback end) noexcept
             : m_state(state), m_end(end) {}
 
@@ -44,21 +50,24 @@ namespace ImGuiSugar
         BooleanGuard<AlwaysCallEnd>& operator=(const BooleanGuard<AlwaysCallEnd>&) = delete; // NOLINT
         BooleanGuard<AlwaysCallEnd>& operator=(BooleanGuard<AlwaysCallEnd>&&) = delete; // NOLINT
 
-        ~BooleanGuard() noexcept 
+        ~BooleanGuard() noexcept
         {
-            if (AlwaysCallEnd || m_state) { m_end(); }
+            if constexpr (AlwaysCallEnd)
+            {
+                m_end();
+            }
+            else if (m_state)
+            {
+                m_end();
+            }
         }
 
-        operator bool() const & noexcept { return m_state; } // (Implicit) NOLINT
-
-        private:
-            const bool m_state;
-            const ScopeEndCallback m_end;
+        operator bool() const& noexcept { return m_state; } // (Implicit) NOLINT
     };
 
     // For special cases, transform void(*)(int) to void(*)()
     inline void PopStyleColor() { ImGui::PopStyleColor(1); };
-    inline void PopStyleVar()   { ImGui::PopStyleVar(1); };
+    inline void PopStyleVar() { ImGui::PopStyleVar(1); };
 
     // Tooltip auto triggered on hover
     inline auto BeginTooltip() -> bool
@@ -84,6 +93,7 @@ namespace ImGuiSugar
 // Concatenating symbols with __LINE__ requires two levels of indirection
 #define IMGUI_SUGAR_CONCAT0(A, B) A ## B
 #define IMGUI_SUGAR_CONCAT1(A, B) IMGUI_SUGAR_CONCAT0(A, B)
+#define IMGUI_SUGAR_UNIQUE_NAME(name) IMGUI_SUGAR_CONCAT1(name, __LINE__)
 
 // ----------------------------------------------------------------------------
 // [SECTION] Generic macros to simplify repetitive declarations
@@ -97,16 +107,16 @@ namespace ImGuiSugar
 // +----------------------+-------------------+-----------------+---------------------+
 
 #define IMGUI_SUGAR_SCOPED_BOOL(BEGIN, END, ALWAYS, ...) \
-    if (const ImGuiSugar::BooleanGuard<ALWAYS> _ui_scope_guard = {BEGIN(__VA_ARGS__), &END})
+    if (const ImGuiSugar::BooleanGuard<ALWAYS> IMGUI_SUGAR_UNIQUE_NAME(_ui_scope_guard) = {BEGIN(__VA_ARGS__), &END})
 
 #define IMGUI_SUGAR_SCOPED_BOOL_0(BEGIN, END, ALWAYS) \
-    if (const ImGuiSugar::BooleanGuard<ALWAYS> _ui_scope_guard = {BEGIN(), &END})
+    if (const ImGuiSugar::BooleanGuard<ALWAYS> IMGUI_SUGAR_UNIQUE_NAME(_ui_scope_guard) = {BEGIN(), &END})
 
 #define IMGUI_SUGAR_SCOPED_VOID_N(BEGIN, END, ...) \
-    if (const ImGuiSugar::BooleanGuard<true> _ui_scope_guard = {IMGUI_SUGAR_ES(BEGIN, __VA_ARGS__), &END})
+    if (const ImGuiSugar::BooleanGuard<true> IMGUI_SUGAR_UNIQUE_NAME(_ui_scope_guard) = {IMGUI_SUGAR_ES(BEGIN, __VA_ARGS__), &END})
 
 #define IMGUI_SUGAR_SCOPED_VOID_0(BEGIN, END) \
-    if (const ImGuiSugar::BooleanGuard<true> _ui_scope_guard = {IMGUI_SUGAR_ES_0(BEGIN), &END})
+    if (const ImGuiSugar::BooleanGuard<true> IMGUI_SUGAR_UNIQUE_NAME(_ui_scope_guard) = {IMGUI_SUGAR_ES_0(BEGIN), &END})
 
 #define IMGUI_SUGAR_PARENT_SCOPED_VOID_N(BEGIN, END, ...) \
     const ImGuiSugar::BooleanGuard<true> IMGUI_SUGAR_CONCAT1(_ui_scope_, __LINE__) = {IMGUI_SUGAR_ES(BEGIN, __VA_ARGS__), &END}
@@ -142,8 +152,25 @@ namespace ImGuiSugar
 #define with_MainMenuBar             IMGUI_SUGAR_SCOPED_BOOL_0(ImGui::BeginMainMenuBar,      ImGui::EndMainMenuBar,    false)
 #define with_MenuBar                 IMGUI_SUGAR_SCOPED_BOOL_0(ImGui::BeginMenuBar,          ImGui::EndMenuBar,        false)
 
-#define with_Group                   IMGUI_SUGAR_SCOPED_VOID_0(ImGui::BeginGroup,            ImGui::EndGroup)
-#define with_Tooltip                 IMGUI_SUGAR_SCOPED_VOID_0(ImGui::BeginTooltip,          ImGui::EndTooltip)
+inline void end_frame()
+{
+    ImGui::End();
+    ImGui::Render();
+}
+
+inline void begin_frame(const std::function<void()>& renderer_begin_frame)
+{
+    if (renderer_begin_frame != nullptr)
+    {
+        renderer_begin_frame();
+    }
+
+    ImGui::NewFrame();
+}
+
+#define with_Group                              IMGUI_SUGAR_SCOPED_VOID_0(ImGui::BeginGroup,                                   ImGui::EndGroup)
+#define with_Tooltip                            IMGUI_SUGAR_SCOPED_VOID_0(ImGui::BeginTooltip,                                 ImGui::EndTooltip)
+#define with_Frame(renderer_begin_function)     IMGUI_SUGAR_SCOPED_VOID_0([&]() { begin_frame(renderer_begin_function); },     end_frame)
 
 #define with_Font(...)               IMGUI_SUGAR_SCOPED_VOID_N(ImGui::PushFont,               ImGui::PopFont,               __VA_ARGS__)
 #define with_AllowKeyboardFocus(...) IMGUI_SUGAR_SCOPED_VOID_N(ImGui::PushAllowKeyboardFocus, ImGui::PopAllowKeyboardFocus, __VA_ARGS__)
