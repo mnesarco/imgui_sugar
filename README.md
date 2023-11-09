@@ -1,23 +1,23 @@
-# C++11 syntactic sugar for ImGui with RAII guards
+# C++17 syntactic sugar for ImGui with RAII guards
 
 This single header library adds a clean DSL (syntax sugar) to
-construct ImGui interfaces in c++11. It manages the stack with transparent
+construct ImGui interfaces in c++17. It manages the stack with transparent
 RAII guards.
 
 ## Requirements
 
-* c++11
+* c++17
 * [Dear ImGui](https://github.com/ocornut/imgui)
 
 ## Install
 
-Just add `imgui_sugar.hpp` to your sources and include it when required.
+Just add `ImGuiRAII.hpp` to your sources and include it when required.
 
 ## Example usage
 
 ```cpp
 #include <imgui/imgui.h>
-#include <imgui_sugar.hpp>
+#include <ImGuiRAII.hpp>
 
 // ...
 
@@ -76,7 +76,7 @@ Just add `imgui_sugar.hpp` to your sources and include it when required.
 
 ## Rational
 
-* Macros named `with_*` do start its own scope and automatically call End/Pop as required. (Yes the case where End/Pop call is unconditionall is respected).
+* Macros named `with_*` do start its own scope and automatically call End/Pop as required. (Yes the case where End/Pop call is unconditional is respected).
 
 ```cpp
 with_Window(...) { 
