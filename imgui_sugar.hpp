@@ -20,7 +20,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#include <imgui/imgui.h>
+#include <imgui.h>
 
 // clang-format off
 
@@ -44,10 +44,7 @@ namespace ImGuiSugar
         BooleanGuard<AlwaysCallEnd>& operator=(const BooleanGuard<AlwaysCallEnd>&) = delete; // NOLINT
         BooleanGuard<AlwaysCallEnd>& operator=(BooleanGuard<AlwaysCallEnd>&&) = delete; // NOLINT
 
-        ~BooleanGuard() noexcept 
-        {
-            if (AlwaysCallEnd || m_state) { m_end(); }
-        }
+        ~BooleanGuard() noexcept;
 
         operator bool() const & noexcept { return m_state; } // (Implicit) NOLINT
 
@@ -55,6 +52,15 @@ namespace ImGuiSugar
             const bool m_state;
             const ScopeEndCallback m_end;
     };
+
+    template<>
+    inline BooleanGuard<true>::~BooleanGuard() noexcept { m_end(); }
+
+    template<>
+    inline BooleanGuard<false>::~BooleanGuard() noexcept 
+    { 
+        if (m_state) { m_end(); } 
+    }
 
     // For special cases, transform void(*)(int) to void(*)()
     inline void PopStyleColor() { ImGui::PopStyleColor(1); };
