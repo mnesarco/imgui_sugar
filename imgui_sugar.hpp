@@ -103,16 +103,16 @@ namespace ImGuiSugar
 // +----------------------+-------------------+-----------------+---------------------+
 
 #define IMGUI_SUGAR_SCOPED_BOOL(BEGIN, END, ALWAYS, ...) \
-    if (const ImGuiSugar::BooleanGuard<ALWAYS> _ui_scope_guard = {BEGIN(__VA_ARGS__), &END})
+    if (const ImGuiSugar::BooleanGuard<ALWAYS> IMGUI_SUGAR_CONCAT1( _ui_scope_guard, __LINE__ ) = {BEGIN(__VA_ARGS__), &END})
 
 #define IMGUI_SUGAR_SCOPED_BOOL_0(BEGIN, END, ALWAYS) \
-    if (const ImGuiSugar::BooleanGuard<ALWAYS> _ui_scope_guard = {BEGIN(), &END})
+    if (const ImGuiSugar::BooleanGuard<ALWAYS> IMGUI_SUGAR_CONCAT1( _ui_scope_guard, __LINE__ ) = {BEGIN(), &END})
 
 #define IMGUI_SUGAR_SCOPED_VOID_N(BEGIN, END, ...) \
-    if (const ImGuiSugar::BooleanGuard<true> _ui_scope_guard = {IMGUI_SUGAR_ES(BEGIN, __VA_ARGS__), &END})
+    if (const ImGuiSugar::BooleanGuard<true> IMGUI_SUGAR_CONCAT1( _ui_scope_guard, __LINE__ ) = {IMGUI_SUGAR_ES(BEGIN, __VA_ARGS__), &END})
 
 #define IMGUI_SUGAR_SCOPED_VOID_0(BEGIN, END) \
-    if (const ImGuiSugar::BooleanGuard<true> _ui_scope_guard = {IMGUI_SUGAR_ES_0(BEGIN), &END})
+    if (const ImGuiSugar::BooleanGuard<true> IMGUI_SUGAR_CONCAT1( _ui_scope_guard, __LINE__ ) = {IMGUI_SUGAR_ES_0(BEGIN), &END})
 
 #define IMGUI_SUGAR_PARENT_SCOPED_VOID_N(BEGIN, END, ...) \
     const ImGuiSugar::BooleanGuard<true> IMGUI_SUGAR_CONCAT1(_ui_scope_, __LINE__) = {IMGUI_SUGAR_ES(BEGIN, __VA_ARGS__), &END}
