@@ -65,6 +65,7 @@ namespace ImGuiSugar
     // For special cases, transform void(*)(int) to void(*)()
     inline void PopStyleColor() { ImGui::PopStyleColor(1); };
     inline void PopStyleVar()   { ImGui::PopStyleVar(1); };
+    inline void Unindent()      { ImGui::Unindent(); }
 
     // Tooltip auto triggered on hover
     inline auto BeginTooltip() -> bool
@@ -171,13 +172,15 @@ namespace ImGuiSugar
 #define set_ClipRect(...)            IMGUI_SUGAR_PARENT_SCOPED_VOID_N(ImGui::PushClipRect,           ImGui::PopClipRect,           __VA_ARGS__)
 #define set_TextureID(...)           IMGUI_SUGAR_PARENT_SCOPED_VOID_N(ImGui::PushTextureID,          ImGui::PopTextureID,          __VA_ARGS__)
 
-// Special case (overloaded functions StyleColor and StyleVar)
+// Special case (overloaded functions StyleColor, StyleVar and Indent)
 
 #define set_StyleColor(...)          IMGUI_SUGAR_PARENT_SCOPED_VOID_N(ImGui::PushStyleColor,  ImGuiSugar::PopStyleColor,           __VA_ARGS__)
 #define set_StyleVar(...)            IMGUI_SUGAR_PARENT_SCOPED_VOID_N(ImGui::PushStyleVar,    ImGuiSugar::PopStyleVar,             __VA_ARGS__)
+#define set_Indent(...)              IMGUI_SUGAR_PARENT_SCOPED_VOID_N(ImGui::Indent,          ImGuiSugar::Unindent,                __VA_ARGS__)
 
 #define with_StyleColor(...)         IMGUI_SUGAR_SCOPED_VOID_N(ImGui::PushStyleColor,         ImGuiSugar::PopStyleColor,           __VA_ARGS__)
 #define with_StyleVar(...)           IMGUI_SUGAR_SCOPED_VOID_N(ImGui::PushStyleVar,           ImGuiSugar::PopStyleVar,             __VA_ARGS__)
+#define with_Indent(...)             IMGUI_SUGAR_SCOPED_VOID_N(ImGui::Indent,                 ImGuiSugar::Unindent,                __VA_ARGS__)
 
 // Non RAII 
 

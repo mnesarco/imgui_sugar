@@ -139,6 +139,7 @@ Sugar function                |Begin Call               |End Call |
 |with_TreeNodeEx(...) { ... }         |ImGui::TreeNodeEx               |ImGui::TreePop |
 |with_TreeNodeExV(...) { ... }        |ImGui::TreeNodeExV              |ImGui::TreePop |
 |with_CollapsingHeader(...) { ... }   |ImGui::CollapsingHeader         | |           
+|with_Indent(...) { ... }             |ImGui::Indent                   |ImGui::Unindent|           
 
 ## Parent scoped guards 
 
