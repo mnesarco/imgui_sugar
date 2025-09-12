@@ -160,6 +160,7 @@ namespace ImGuiSugar
 #define with_ID(...)                 IMGUI_SUGAR_SCOPED_VOID_N(ImGui::PushID,                 ImGui::PopID,                 __VA_ARGS__)
 #define with_ClipRect(...)           IMGUI_SUGAR_SCOPED_VOID_N(ImGui::PushClipRect,           ImGui::PopClipRect,           __VA_ARGS__)
 #define with_TextureID(...)          IMGUI_SUGAR_SCOPED_VOID_N(ImGui::PushTextureID,          ImGui::PopTextureID,          __VA_ARGS__)
+#define with_Disabled(...)           IMGUI_SUGAR_SCOPED_VOID_N(ImGui::BeginDisabled,          ImGui::EndDisabled,           __VA_ARGS__)
 
 // Non self scoped guards (managed by parent scope)
 
