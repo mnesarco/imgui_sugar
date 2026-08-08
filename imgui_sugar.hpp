@@ -144,13 +144,13 @@ namespace ImGuiSugar
 #define with_TreeNodeEx(...)         IMGUI_SUGAR_SCOPED_BOOL(ImGui::TreeNodeEx,              ImGui::TreePop,           false, __VA_ARGS__)
 #define with_TreeNodeExV(...)        IMGUI_SUGAR_SCOPED_BOOL(ImGui::TreeNodeExV,             ImGui::TreePop,           false, __VA_ARGS__)
 
+#define with_Tooltip                 IMGUI_SUGAR_SCOPED_BOOL_0(ImGui::BeginTooltip,          ImGui::EndTooltip,        false)
 #define with_TooltipOnHover          IMGUI_SUGAR_SCOPED_BOOL_0(ImGuiSugar::BeginTooltip,     ImGui::EndTooltip,        false)
 #define with_DragDropTarget          IMGUI_SUGAR_SCOPED_BOOL_0(ImGui::BeginDragDropTarget,   ImGui::EndDragDropTarget, false)
 #define with_MainMenuBar             IMGUI_SUGAR_SCOPED_BOOL_0(ImGui::BeginMainMenuBar,      ImGui::EndMainMenuBar,    false)
 #define with_MenuBar                 IMGUI_SUGAR_SCOPED_BOOL_0(ImGui::BeginMenuBar,          ImGui::EndMenuBar,        false)
 
 #define with_Group                   IMGUI_SUGAR_SCOPED_VOID_0(ImGui::BeginGroup,            ImGui::EndGroup)
-#define with_Tooltip                 IMGUI_SUGAR_SCOPED_VOID_0(ImGui::BeginTooltip,          ImGui::EndTooltip)
 
 #define with_Font(...)               IMGUI_SUGAR_SCOPED_VOID_N(ImGui::PushFont,               ImGui::PopFont,               __VA_ARGS__)
 #define with_AllowKeyboardFocus(...) IMGUI_SUGAR_SCOPED_VOID_N(ImGui::PushAllowKeyboardFocus, ImGui::PopAllowKeyboardFocus, __VA_ARGS__)
