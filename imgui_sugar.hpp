@@ -144,6 +144,7 @@ namespace ImGuiSugar
 #define with_TreeNodeEx(...)         IMGUI_SUGAR_SCOPED_BOOL(ImGui::TreeNodeEx,              ImGui::TreePop,           false, __VA_ARGS__)
 #define with_TreeNodeExV(...)        IMGUI_SUGAR_SCOPED_BOOL(ImGui::TreeNodeExV,             ImGui::TreePop,           false, __VA_ARGS__)
 
+#define with_ItemTooltip             IMGUI_SUGAR_SCOPED_BOOL_0(ImGui::BeginItemTooltip,      ImGui::EndTooltip,        false)
 #define with_TooltipOnHover          IMGUI_SUGAR_SCOPED_BOOL_0(ImGuiSugar::BeginTooltip,     ImGui::EndTooltip,        false)
 #define with_DragDropTarget          IMGUI_SUGAR_SCOPED_BOOL_0(ImGui::BeginDragDropTarget,   ImGui::EndDragDropTarget, false)
 #define with_MainMenuBar             IMGUI_SUGAR_SCOPED_BOOL_0(ImGui::BeginMainMenuBar,      ImGui::EndMainMenuBar,    false)
